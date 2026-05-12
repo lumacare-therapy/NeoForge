@@ -43,7 +43,7 @@
         .input-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
         .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border: none; border-radius: 16px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-bottom: 16px; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px var(--primary-glow); }
-        .quick-login-btn { width: 100%; padding: 14px; background: var(--google); border: none; border-radius: 16px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
+        .quick-login-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); border: none; border-radius: 16px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
         .quick-login-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
         .divider { text-align: center; margin: 24px 0; position: relative; }
         .divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--glass-border); }
@@ -105,21 +105,21 @@
                 <p style="color: var(--text-secondary);">Premium Content Generation Platform</p>
             </div>
             
-            <!-- Quick Login Button - Works instantly -->
+            <!-- Quick Access Button -->
             <button class="quick-login-btn" onclick="quickLogin()">
-                <i class="fas fa-bolt"></i> Quick Access (No Signup)
+                <i class="fas fa-bolt"></i> Get Started Now (Instant Access)
             </button>
             
-            <div class="divider"><span>or sign in with email</span></div>
+            <div class="divider"><span>or sign up with email</span></div>
             
             <div id="loginForm">
                 <div class="input-group">
                     <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="loginEmail" placeholder="hello@neoforge.ai" value="demo@neoforge.ai">
+                    <input type="email" id="loginEmail" placeholder="you@example.com">
                 </div>
                 <div class="input-group">
                     <label><i class="fas fa-lock"></i> Password</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••" value="demo123">
+                    <input type="password" id="loginPassword" placeholder="••••••••">
                 </div>
                 <button class="btn-primary" onclick="handleLogin()">Sign In →</button>
                 <div style="text-align: center; color: var(--text-secondary);">
@@ -133,7 +133,7 @@
                 </div>
                 <div class="input-group">
                     <label><i class="fas fa-envelope"></i> Email</label>
-                    <input type="email" id="signupEmail" placeholder="hello@neoforge.ai">
+                    <input type="email" id="signupEmail" placeholder="you@example.com">
                 </div>
                 <div class="input-group">
                     <label><i class="fas fa-lock"></i> Password</label>
@@ -254,9 +254,8 @@
         let usageChart = null;
         let analyticsEvents = [];
 
-        // QUICK LOGIN - One click, instant access (NO Google setup needed!)
+        // Quick Login - One click instant access
         function quickLogin() {
-            // Create a random username
             const randomName = 'User_' + Math.floor(Math.random() * 10000);
             const randomEmail = `user${Date.now()}@quick.neoforge.ai`;
             
@@ -282,7 +281,7 @@
             initChart();
             updateAnalyticsDashboard();
             addActivity(`🎉 New user joined: ${randomName}`);
-            showToast(`Welcome, ${randomName}! 🚀 You're logged in instantly.`);
+            showToast(`Welcome, ${randomName}! 🚀`);
             trackEvent('auth', 'quick_login');
         }
 
@@ -397,18 +396,13 @@
             
             if (storedUsers) { users = JSON.parse(storedUsers); } 
             else {
-                users = [
-                    { id: 1, name: 'Alex Morgan', email: 'demo@neoforge.ai', password: 'demo123', subscription: 'pro', apiCalls: 42, wordsGenerated: 12500, createdAt: new Date().toISOString() }
-                ];
+                users = [];
                 saveUsers();
             }
             if (storedApiKeys) { apiKeys = JSON.parse(storedApiKeys); }
             if (storedActivities) { activities = JSON.parse(storedActivities); } 
             else {
-                activities = [
-                    { text: '📊 Analytics active', time: new Date().toLocaleString() },
-                    { text: '🚀 Platform ready', time: new Date().toLocaleString() }
-                ];
+                activities = [];
                 saveActivities();
             }
             loadAnalytics();
@@ -444,7 +438,7 @@
                 updateAnalyticsDashboard();
                 showToast(`Welcome back, ${user.name}! 🚀`); 
             } else { 
-                showToast('Invalid credentials. Try demo@neoforge.ai / demo123'); 
+                showToast('Invalid credentials'); 
             }
         }
         
@@ -498,7 +492,7 @@
         function copyApiKey() { const apiKey = apiKeys[currentUser.id]; if (apiKey) { navigator.clipboard.writeText(apiKey); showToast('API key copied!'); } else { showToast('Generate a key first'); } }
         function addActivity(activity) { activities.unshift({ text: activity, time: new Date().toLocaleString() }); activities = activities.slice(0, 20); saveActivities(); loadActivity(); }
         function loadActivity() { const feed = document.getElementById('activityFeed'); if (feed && activities.length) { feed.innerHTML = activities.map(a => `<div class="activity-item"><div class="activity-icon"><i class="fas fa-bolt"></i></div><div style="flex:1;"><div>${a.text}</div><small style="color:var(--text-secondary);">${a.time}</small></div></div>`).join(''); } }
-        function initChart() { const ctx = document.getElementById('usageChart').getContext('2d'); usageChart = new Chart(ctx, { type: 'line', data: { labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], datasets: [{ label: 'Generations', data: [12, 19, 15, currentUser?.apiCalls || 27], borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)', tension: 0.4, fill: true }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: 'white' } } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'white' } }, x: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'white' } } } } }); }
+        function initChart() { const ctx = document.getElementById('usageChart').getContext('2d'); usageChart = new Chart(ctx, { type: 'line', data: { labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], datasets: [{ label: 'Generations', data: [0, 0, 0, 0], borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)', tension: 0.4, fill: true }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: 'white' } } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'white' } }, x: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'white' } } } } }); }
         function updateChart() { if (usageChart && currentUser) { usageChart.data.datasets[0].data[3] = currentUser.apiCalls || 0; usageChart.update(); } }
         function logout() { currentUser = null; localStorage.removeItem('neoforge_currentUser'); document.getElementById('authContainer').style.display = 'flex'; document.getElementById('dashboard').style.display = 'none'; showToast('Logged out'); }
         function trackEvent(category, action, label) { saveAnalyticsEvent(category, action, label); }
