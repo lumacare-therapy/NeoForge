@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoForge AI - Premium Content Platform</title>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6366f1; --primary-dark: #4f46e5; --primary-glow: rgba(99,102,241,0.4);
+            --secondary: #ec4899; --dark: #0f0f12; --darker: #0a0a0c;
+            --glass: rgba(255,255,255,0.05); --glass-border: rgba(255,255,255,0.1);
+            --text-primary: #ffffff; --text-secondary: #a1a1aa;
+            --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+            --google: #db4437;
+        }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--darker); color: var(--text-primary); overflow-x: hidden; }
+        .gradient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at 20% 50%, rgba(99,102,241,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(236,72,153,0.15) 0%, transparent 50%); }
+        .gradient-bg::before { content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%); animation: rotate 20s linear infinite; opacity: 0.3; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .glass-card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 24px; transition: all 0.3s; }
+        .glass-card:hover { transform: translateY(-4px); border-color: rgba(99,102,241,0.5); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; position: relative; }
+        .auth-card { background: rgba(15,15,18,0.8); backdrop-filter: blur(20px); border: 1px solid rgba(99,102,241,0.3); border-radius: 32px; padding: 48px; width: 100%; max-width: 440px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .auth-card h2 { font-size: 32px; margin-bottom: 32px; background: linear-gradient(135deg, #fff 0%, #6366f1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
+        .input-group { margin-bottom: 24px; }
+        .input-group label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-weight: 500; font-size: 14px; }
+        .input-group input { width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; font-size: 16px; transition: all 0.2s; }
+        .input-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border: none; border-radius: 16px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-bottom: 16px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px var(--primary-glow); }
+        .quick-login-btn { width: 100%; padding: 14px; background: var(--google); border: none; border-radius: 16px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
+        .quick-login-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .divider { text-align: center; margin: 24px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--glass-border); }
+        .divider span { background: rgba(15,15,18,0.8); padding: 0 16px; position: relative; color: var(--text-secondary); font-size: 14px; }
+        .dashboard { display: none; position: relative; }
+        .sidebar { position: fixed; left: 0; top: 0; width: 280px; height: 100vh; background: rgba(10,10,12,0.95); backdrop-filter: blur(20px); border-right: 1px solid rgba(255,255,255,0.1); padding: 32px 24px; z-index: 10; overflow-y: auto; }
+        .logo { font-size: 28px; font-weight: 800; margin-bottom: 48px; background: linear-gradient(135deg, #fff 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 12px; }
+        .nav-item { padding: 12px 16px; margin-bottom: 8px; border-radius: 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px; color: var(--text-secondary); }
+        .nav-item:hover, .nav-item.active { background: var(--glass); color: white; }
+        .nav-item i { width: 24px; }
+        .main-content { margin-left: 280px; padding: 32px; min-height: 100vh; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .stat-card { background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(236,72,153,0.1) 100%); border: 1px solid rgba(99,102,241,0.2); border-radius: 24px; padding: 24px; transition: all 0.3s; cursor: pointer; }
+        .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+        .stat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .stat-header i { font-size: 32px; color: var(--primary); }
+        .stat-value { font-size: 48px; font-weight: 800; margin-bottom: 8px; }
+        .stat-label { color: var(--text-secondary); font-size: 14px; }
+        .ai-generator { background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, rgba(236,72,153,0.05) 100%); border: 1px solid rgba(99,102,241,0.2); border-radius: 24px; padding: 32px; margin-bottom: 32px; }
+        .ai-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+        .ai-badge { background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        select, textarea { width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: white; font-size: 16px; margin-bottom: 16px; transition: all 0.2s; }
+        select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+        textarea { resize: vertical; min-height: 120px; }
+        .typing-effect { animation: fadeInUp 0.5s ease-out; white-space: pre-wrap; line-height: 1.6; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 24px; }
+        .pricing-card { background: rgba(15,15,18,0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 32px; transition: all 0.3s; cursor: pointer; }
+        .pricing-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .pricing-card.popular { border-color: var(--primary); background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(236,72,153,0.15)); }
+        .price { font-size: 48px; font-weight: 800; margin: 16px 0; }
+        .paypal-button { background: #0070ba; color: white; padding: 12px 24px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; width: 100%; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; }
+        .paypal-button:hover { background: #003087; transform: translateY(-2px); }
+        .chart-container { background: rgba(15,15,18,0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 24px; margin-top: 32px; }
+        canvas { max-height: 400px; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 0.6s linear infinite; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
+        .activity-feed { margin-top: 32px; }
+        .activity-item { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 12px; }
+        .activity-icon { width: 40px; height: 40px; background: rgba(99,102,241,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+        .api-key-display { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; margin: 20px 0; font-family: monospace; word-break: break-all; color: var(--primary); }
+        pre { background: rgba(0,0,0,0.3); padding: 16px; border-radius: 12px; margin-top: 12px; overflow-x: auto; font-family: monospace; font-size: 14px; }
+        .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); color: white; padding: 12px 24px; border-radius: 50px; z-index: 1000; animation: slideUp 0.3s ease-out; }
+        .analytics-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .analytics-card { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 16px; text-align: center; }
+        .analytics-number { font-size: 28px; font-weight: 800; color: var(--primary); }
+        @media (max-width: 768px) { .sidebar { transform: translateX(-100%); transition: transform 0.3s; } .sidebar.open { transform: translateX(0); } .main-content { margin-left: 0; padding: 16px; } .stats-grid { grid-template-columns: 1fr; } .pricing-grid { grid-template-columns: 1fr; } .auth-card { padding: 32px 24px; } }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+
+    <div id="authContainer" class="auth-container">
+        <div class="auth-card">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div style="font-size: 48px;">🚀</div>
+                <h2>NeoForge AI</h2>
+                <p style="color: var(--text-secondary);">Premium Content Generation Platform</p>
+            </div>
+            
+            <!-- Quick Login Button - Works instantly -->
+            <button class="quick-login-btn" onclick="quickLogin()">
+                <i class="fas fa-bolt"></i> Quick Access (No Signup)
+            </button>
+            
+            <div class="divider"><span>or sign in with email</span></div>
+            
+            <div id="loginForm">
+                <div class="input-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" placeholder="hello@neoforge.ai" value="demo@neoforge.ai">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" value="demo123">
+                </div>
+                <button class="btn-primary" onclick="handleLogin()">Sign In →</button>
+                <div style="text-align: center; color: var(--text-secondary);">
+                    New to NeoForge? <a onclick="showSignup()" style="color: var(--primary); cursor: pointer;">Create Account</a>
+                </div>
+            </div>
+            <div id="signupForm" style="display:none;">
+                <div class="input-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" id="signupName" placeholder="John Carter">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="signupEmail" placeholder="hello@neoforge.ai">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a strong password">
+                </div>
+                <button class="btn-primary" onclick="handleSignup()">Create Account →</button>
+                <div style="text-align: center; color: var(--text-secondary);">
+                    Already have an account? <a onclick="showLogin()" style="color: var(--primary); cursor: pointer;">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboard" class="dashboard">
+        <div class="sidebar" id="sidebar">
+            <div class="logo"><i class="fas fa-brain"></i><span>NeoForge</span></div>
+            <div class="nav-item active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i><span>Analytics</span></div>
+            <div class="nav-item" onclick="switchTab('generate')"><i class="fas fa-magic"></i><span>AI Studio</span></div>
+            <div class="nav-item" onclick="switchTab('pricing')"><i class="fas fa-crown"></i><span>Upgrade</span></div>
+            <div class="nav-item" onclick="switchTab('api')"><i class="fas fa-code"></i><span>API Access</span></div>
+            <div style="margin-top: auto; padding-top: 32px;"><div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></div></div>
+        </div>
+
+        <div class="main-content">
+            <div id="analyticsTab">
+                <div style="margin-bottom: 32px;">
+                    <h1 style="font-size: 36px; margin-bottom: 8px;">Analytics Dashboard 📊</h1>
+                    <p style="color: var(--text-secondary);">Real-time user behavior & platform analytics</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-header"><i class="fas fa-users"></i><span class="stat-label">Total Users</span></div><div class="stat-value" id="totalUsers">0</div><div class="stat-label">Registered Accounts</div></div>
+                    <div class="stat-card"><div class="stat-header"><i class="fas fa-rocket"></i><span class="stat-label">Total Generations</span></div><div class="stat-value" id="totalGenerations">0</div><div class="stat-label">Content Created</div></div>
+                    <div class="stat-card"><div class="stat-header"><i class="fas fa-dollar-sign"></i><span class="stat-label">Active Subscribers</span></div><div class="stat-value" id="activeSubscribers">0</div><div class="stat-label">Paying Users</div></div>
+                    <div class="stat-card"><div class="stat-header"><i class="fas fa-calendar"></i><span class="stat-label">Today's Activity</span></div><div class="stat-value" id="todayActivity">0</div><div class="stat-label">Generations Today</div></div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="usageChart"></canvas>
+                </div>
+                
+                <div class="analytics-summary">
+                    <div class="analytics-card"><div class="analytics-number" id="avgPerUser">0</div><div style="color: var(--text-secondary);">Avg Generations/User</div></div>
+                    <div class="analytics-card"><div class="analytics-number" id="totalWords">0</div><div style="color: var(--text-secondary);">Total Words Generated</div></div>
+                    <div class="analytics-card"><div class="analytics-number" id="conversionRate">0%</div><div style="color: var(--text-secondary);">Free to Paid Rate</div></div>
+                </div>
+                
+                <div class="activity-feed glass-card" style="padding: 24px; margin-top: 32px;">
+                    <h3 style="margin-bottom: 20px;">📊 Live User Activity Feed</h3>
+                    <div id="activityFeed"></div>
+                </div>
+            </div>
+
+            <div id="generateTab" style="display:none;">
+                <div class="ai-generator">
+                    <div class="ai-header">
+                        <i class="fas fa-bolt" style="font-size: 32px; color: var(--primary);"></i>
+                        <div><h2>AI Studio</h2><p style="color: var(--text-secondary);">Advanced Neural Content Engine</p></div>
+                        <div class="ai-badge">PRODUCTION</div>
+                    </div>
+                    
+                    <select id="contentType">
+                        <option value="blog">📝 Blog Post</option>
+                        <option value="social">📱 Social Media</option>
+                        <option value="email">✉️ Email Campaign</option>
+                        <option value="product">🛍️ Product Description</option>
+                        <option value="twitch">🎮 Twitch Streaming Advice</option>
+                        <option value="youtube">📹 YouTube Script</option>
+                        <option value="tiktok">🎬 TikTok Script</option>
+                    </select>
+                    
+                    <textarea id="prompt" placeholder="What do you want to create? Example: 'Give me 10 tips for growing my Twitch channel'"></textarea>
+                    
+                    <button class="btn-primary" onclick="generateContent()" id="generateBtn" style="width: auto; padding: 14px 32px;">
+                        <i class="fas fa-wand-magic"></i> Generate Content
+                    </button>
+                    
+                    <div id="result" style="display:none; margin-top: 32px; padding: 24px; background: rgba(0,0,0,0.3); border-radius: 16px;">
+                        <h3><i class="fas fa-sparkles"></i> Generated Content</h3>
+                        <div id="resultContent" style="margin-top: 16px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pricingTab" style="display:none;">
+                <h2 style="margin-bottom: 16px;">Choose Your Plan</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 32px;">Scale your content creation</p>
+                <div class="pricing-grid">
+                    <div class="pricing-card"><i class="fas fa-seedling" style="font-size: 40px; color: var(--primary);"></i><h3 style="margin: 16px 0;">Basic</h3><div class="price">$9.99</div><p style="color: var(--text-secondary);">per month</p><ul style="margin-top: 24px; list-style: none;"><li style="padding: 8px 0;">✓ 1,000 generations/month</li><li style="padding: 8px 0;">✓ 50,000 words</li><li style="padding: 8px 0;">✓ 1 API key</li></ul><button class="paypal-button" onclick="subscribeWithPayPal('basic')"><i class="fab fa-paypal"></i> Subscribe with PayPal</button></div>
+                    <div class="pricing-card popular"><i class="fas fa-crown" style="font-size: 40px; color: var(--warning);"></i><h3 style="margin: 16px 0;">Pro</h3><div class="price">$29.99</div><p style="color: var(--text-secondary);">per month</p><ul style="margin-top: 24px; list-style: none;"><li style="padding: 8px 0;">✓ 10,000 generations/month</li><li style="padding: 8px 0;">✓ 500,000 words</li><li style="padding: 8px 0;">✓ 5 API keys</li><li style="padding: 8px 0;">✓ Priority support</li></ul><button class="paypal-button" onclick="subscribeWithPayPal('pro')"><i class="fab fa-paypal"></i> Subscribe with PayPal</button></div>
+                    <div class="pricing-card"><i class="fas fa-chart-line" style="font-size: 40px; color: var(--success);"></i><h3 style="margin: 16px 0;">Enterprise</h3><div class="price">$99.99</div><p style="color: var(--text-secondary);">per month</p><ul style="margin-top: 24px; list-style: none;"><li style="padding: 8px 0;">✓ Unlimited generations</li><li style="padding: 8px 0;">✓ Unlimited words</li><li style="padding: 8px 0;">✓ Custom AI training</li><li style="padding: 8px 0;">✓ 24/7 dedicated support</li></ul><button class="paypal-button" onclick="subscribeWithPayPal('enterprise')"><i class="fab fa-paypal"></i> Subscribe with PayPal</button></div>
+                </div>
+            </div>
+
+            <div id="apiTab" style="display:none;">
+                <div class="glass-card" style="padding: 32px;">
+                    <h2><i class="fas fa-key"></i> API Access</h2>
+                    <p style="color: var(--text-secondary); margin: 16px 0;">Integrate NeoForge AI into your applications</p>
+                    <div class="api-key-display"><code id="apiKeyDisplay">No API key generated</code></div>
+                    <button class="btn-primary" onclick="generateApiKey()" style="width: auto; margin-right: 12px;"><i class="fas fa-sync-alt"></i> Generate Key</button>
+                    <button class="btn-primary" onclick="copyApiKey()" style="width: auto; background: var(--glass);"><i class="fas fa-copy"></i> Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAYPAL_LINKS = {
+            basic: 'https://www.paypal.com/ncp/payment/ALANC2P7EQ69E',
+            pro: 'https://www.paypal.com/ncp/payment/26MBK5ZT8G94W',
+            enterprise: 'https://www.paypal.com/ncp/payment/4LBHEKYJV7778'
+        };
+
+        let currentUser = null;
+        let users = [];
+        let apiKeys = {};
+        let activities = [];
+        let usageChart = null;
+        let analyticsEvents = [];
+
+        // QUICK LOGIN - One click, instant access (NO Google setup needed!)
+        function quickLogin() {
+            // Create a random username
+            const randomName = 'User_' + Math.floor(Math.random() * 10000);
+            const randomEmail = `user${Date.now()}@quick.neoforge.ai`;
+            
+            const quickUser = {
+                id: Date.now(),
+                name: randomName,
+                email: randomEmail,
+                password: 'quick_' + Date.now(),
+                subscription: 'free',
+                apiCalls: 0,
+                wordsGenerated: 0,
+                createdAt: new Date().toISOString(),
+                authType: 'quick'
+            };
+            
+            users.push(quickUser);
+            saveUsers();
+            
+            currentUser = quickUser;
+            localStorage.setItem('neoforge_currentUser', JSON.stringify(currentUser));
+            showDashboard();
+            loadActivity();
+            initChart();
+            updateAnalyticsDashboard();
+            addActivity(`🎉 New user joined: ${randomName}`);
+            showToast(`Welcome, ${randomName}! 🚀 You're logged in instantly.`);
+            trackEvent('auth', 'quick_login');
+        }
+
+        function saveAnalyticsEvent(category, action, label) {
+            const event = {
+                id: Date.now(),
+                userId: currentUser?.id || 'anonymous',
+                category, action, label,
+                timestamp: new Date().toISOString()
+            };
+            analyticsEvents.push(event);
+            localStorage.setItem('neoforge_analytics', JSON.stringify(analyticsEvents));
+        }
+
+        function loadAnalytics() {
+            const stored = localStorage.getItem('neoforge_analytics');
+            if(stored) analyticsEvents = JSON.parse(stored);
+            else analyticsEvents = [];
+        }
+
+        function updateAnalyticsDashboard() {
+            document.getElementById('totalUsers').textContent = users.length;
+            const totalGenerations = users.reduce((sum, u) => sum + (u.apiCalls || 0), 0);
+            document.getElementById('totalGenerations').textContent = totalGenerations;
+            const subscribers = users.filter(u => u.subscription !== 'free').length;
+            document.getElementById('activeSubscribers').textContent = subscribers;
+            const today = new Date().toDateString();
+            const todayEvents = analyticsEvents.filter(e => new Date(e.timestamp).toDateString() === today && e.action === 'generate_content');
+            document.getElementById('todayActivity').textContent = todayEvents.length;
+            const avgPerUser = users.length > 0 ? Math.round(totalGenerations / users.length) : 0;
+            document.getElementById('avgPerUser').textContent = avgPerUser;
+            const totalWords = users.reduce((sum, u) => sum + (u.wordsGenerated || 0), 0);
+            document.getElementById('totalWords').textContent = totalWords.toLocaleString();
+            const conversionRate = users.length > 0 ? Math.round((subscribers / users.length) * 100) : 0;
+            document.getElementById('conversionRate').textContent = conversionRate;
+        }
+
+        function generatePremiumContent(prompt, type) {
+            const templates = {
+                blog: `# 🚀 ${prompt}\n\n## The Ultimate Guide to ${prompt}\n\nIn today's fast-paced digital landscape, ${prompt} has become more important than ever before.\n\n### Key Insights\n\n**1. Why ${prompt} Matters**\nThe numbers don't lie: companies focusing on ${prompt} see 3x faster growth.\n\n**2. Proven Strategies**\n- Start with a solid foundation\n- Implement daily practices\n- Track your metrics consistently\n\n**3. Actionable Takeaways**\n✅ Set clear goals\n✅ Create a consistent schedule\n✅ Measure what matters\n\n---\n*Generated by NeoForge AI*`,
+                
+                twitch: `🎮 **TWITCH STREAMING: ${prompt}** 🎮\n\n### 🎯 Action Steps:\n\n**1. Optimize Your Stream**\n- Clean overlays\n- Clear webcam placement\n- Chat visible\n\n**2. Engagement Strategies**\n- Acknowledge every chatter\n- Create viewer polls\n- Raid other streamers\n\n**3. Growth Hacks**\n✅ Clip funny moments\n✅ Post to TikTok\n✅ Collaborate with others\n\n**Pro Tip:** The first 3 months are hardest. Keep showing up!\n\n🚀 Ready to level up? Start with ONE thing from this guide.`,
+                
+                social: `🔥 VIRAL THREAD: ${prompt} 🔥\n\n1/5 Let me share what I've learned...\n\n2/5 Most people get this wrong. Here's the truth...\n\n3/5 The secret sauce? Consistency + Value\n\n4/5 Your action plan for success:\n✅ Start today\n✅ Stay consistent\n✅ Track results\n\n5/5 RT if this helped! 🚀`,
+                
+                email: `Subject: 🚀 Transform Your ${prompt} Strategy\n\nHey there,\n\nWant to level up your ${prompt} game?\n\nHere's what works:\n✓ Consistent effort daily\n✓ Track what matters\n✓ Adjust and optimize\n\n[Click here to learn more]\n\nTo your success,\nThe NeoForge Team`,
+                
+                product: `✨ **${prompt} — Premium Solution** ✨\n\n🔥 Features:\n• Industry-leading technology\n• Real-time analytics\n• Enterprise security\n\n💎 What You Get:\n✓ Proven results\n✓ 24/7 support\n✓ Regular updates\n\n[Start Free Trial]`,
+                
+                youtube: `📹 **YOUTUBE SCRIPT: ${prompt}**\n\n[HOOK - First 30 seconds]\n"What's up everyone! Today we're talking about ${prompt}."\n\n[MAIN CONTENT]\nHere's what you need to know...\n\n[OUTRO]\nLike and subscribe for more!`,
+                
+                tiktok: `🎬 **TIKTOK SCRIPT: ${prompt}**\n\n[0:00-0:03] "Stop doing ${prompt} wrong!"\n[0:03-0:10] "Here's the fix..."\n[0:10-0:20] "Do THIS instead:"\n[0:20-0:30] "Follow for more! 🔥"`
+            };
+            return templates[type] || templates.blog;
+        }
+
+        async function generateContent() {
+            const prompt = document.getElementById('prompt').value;
+            const type = document.getElementById('contentType').value;
+            
+            if (!prompt) {
+                showToast('Please enter a prompt');
+                return;
+            }
+
+            const limits = { free: 100, basic: 1000, pro: 10000, enterprise: 999999 };
+            if (currentUser.apiCalls >= limits[currentUser.subscription]) {
+                showToast('Monthly limit reached. Upgrade to continue.');
+                return;
+            }
+
+            const btn = document.getElementById('generateBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="loading-spinner"></span> Generating...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const content = generatePremiumContent(prompt, type);
+                
+                currentUser.apiCalls = (currentUser.apiCalls || 0) + 1;
+                const wordCount = content.split(/\s+/).length;
+                currentUser.wordsGenerated = (currentUser.wordsGenerated || 0) + wordCount;
+                
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    users[userIndex] = currentUser;
+                    saveUsers();
+                    localStorage.setItem('neoforge_currentUser', JSON.stringify(currentUser));
+                }
+                
+                addActivity(`Generated ${wordCount} words of ${type} content`);
+                saveAnalyticsEvent('generation', 'generate_content', type);
+                
+                const resultDiv = document.getElementById('resultContent');
+                resultDiv.innerHTML = `<div class="typing-effect">${content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+                document.getElementById('result').style.display = 'block';
+                updateStats();
+                if (usageChart) updateChart();
+                updateAnalyticsDashboard();
+                
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                showToast('✨ Content generated!');
+            }, 1000);
+        }
+
+        function loadData() {
+            const storedUsers = localStorage.getItem('neoforge_users');
+            const storedApiKeys = localStorage.getItem('neoforge_apiKeys');
+            const storedActivities = localStorage.getItem('neoforge_activities');
+            
+            if (storedUsers) { users = JSON.parse(storedUsers); } 
+            else {
+                users = [
+                    { id: 1, name: 'Alex Morgan', email: 'demo@neoforge.ai', password: 'demo123', subscription: 'pro', apiCalls: 42, wordsGenerated: 12500, createdAt: new Date().toISOString() }
+                ];
+                saveUsers();
+            }
+            if (storedApiKeys) { apiKeys = JSON.parse(storedApiKeys); }
+            if (storedActivities) { activities = JSON.parse(storedActivities); } 
+            else {
+                activities = [
+                    { text: '📊 Analytics active', time: new Date().toLocaleString() },
+                    { text: '🚀 Platform ready', time: new Date().toLocaleString() }
+                ];
+                saveActivities();
+            }
+            loadAnalytics();
+        }
+        
+        function saveUsers() { localStorage.setItem('neoforge_users', JSON.stringify(users)); }
+        function saveApiKeys() { localStorage.setItem('neoforge_apiKeys', JSON.stringify(apiKeys)); }
+        function saveActivities() { localStorage.setItem('neoforge_activities', JSON.stringify(activities)); }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000); }
+        function showSignup() { document.getElementById('loginForm').style.display = 'none'; document.getElementById('signupForm').style.display = 'block'; }
+        function showLogin() { document.getElementById('loginForm').style.display = 'block'; document.getElementById('signupForm').style.display = 'none'; }
+        
+        function handleSignup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            if (!name || !email || !password) { showToast('Please fill all fields'); return; }
+            if (users.find(u => u.email === email)) { showToast('Email already registered'); return; }
+            const newUser = { id: Date.now(), name, email, password, subscription: 'free', apiCalls: 0, wordsGenerated: 0, createdAt: new Date().toISOString() };
+            users.push(newUser); saveUsers(); showToast('Account created! Please login.'); showLogin();
+        }
+        
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) { 
+                currentUser = user; 
+                localStorage.setItem('neoforge_currentUser', JSON.stringify(currentUser)); 
+                showDashboard(); 
+                loadActivity(); 
+                initChart(); 
+                updateAnalyticsDashboard();
+                showToast(`Welcome back, ${user.name}! 🚀`); 
+            } else { 
+                showToast('Invalid credentials. Try demo@neoforge.ai / demo123'); 
+            }
+        }
+        
+        function showDashboard() { document.getElementById('authContainer').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; updateStats(); }
+        function updateStats() { const limits = { free: 100, basic: 1000, pro: 10000, enterprise: 999999 }; document.getElementById('apiCalls').textContent = currentUser.apiCalls || 0; document.getElementById('monthlyLimit').textContent = limits[currentUser.subscription] || 100; document.getElementById('wordsGenerated').textContent = currentUser.wordsGenerated || 0; document.getElementById('subscriptionPlan').textContent = currentUser.subscription.toUpperCase(); }
+        
+        function switchTab(tab) {
+            document.getElementById('analyticsTab').style.display = 'none'; 
+            document.getElementById('generateTab').style.display = 'none'; 
+            document.getElementById('pricingTab').style.display = 'none'; 
+            document.getElementById('apiTab').style.display = 'none';
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            if (tab === 'dashboard') { 
+                document.getElementById('analyticsTab').style.display = 'block'; 
+                document.querySelector('.nav-item:first-child').classList.add('active'); 
+                if (usageChart) updateChart();
+                updateAnalyticsDashboard();
+            }
+            if (tab === 'generate') { 
+                document.getElementById('generateTab').style.display = 'block'; 
+                document.querySelectorAll('.nav-item')[1].classList.add('active'); 
+            }
+            if (tab === 'pricing') { 
+                document.getElementById('pricingTab').style.display = 'block'; 
+                document.querySelectorAll('.nav-item')[2].classList.add('active'); 
+            }
+            if (tab === 'api') { 
+                document.getElementById('apiTab').style.display = 'block'; 
+                document.querySelectorAll('.nav-item')[3].classList.add('active'); 
+                displayApiKey();
+            }
+        }
+        
+        function subscribeWithPayPal(plan) { 
+            window.open(PAYPAL_LINKS[plan], '_blank'); 
+            setTimeout(() => { 
+                if (confirm('After completing payment, click OK to activate.')) { 
+                    currentUser.subscription = plan; 
+                    const idx = users.findIndex(u => u.id === currentUser.id); 
+                    if (idx !== -1) { users[idx] = currentUser; saveUsers(); } 
+                    updateStats(); 
+                    addActivity(`🎉 Upgraded to ${plan} plan!`); 
+                    showToast(`✅ Welcome to ${plan}!`); 
+                } 
+            }, 1000); 
+        }
+        
+        function generateApiKey() { const newKey = 'nf_' + Math.random().toString(36).substring(2, 15); apiKeys[currentUser.id] = newKey; saveApiKeys(); displayApiKey(); addActivity('Generated new API key'); showToast('API key generated!'); }
+        function displayApiKey() { const keyEl = document.getElementById('apiKeyDisplay'); if (keyEl) { keyEl.innerHTML = apiKeys[currentUser.id] || 'No API key generated'; } }
+        function copyApiKey() { const apiKey = apiKeys[currentUser.id]; if (apiKey) { navigator.clipboard.writeText(apiKey); showToast('API key copied!'); } else { showToast('Generate a key first'); } }
+        function addActivity(activity) { activities.unshift({ text: activity, time: new Date().toLocaleString() }); activities = activities.slice(0, 20); saveActivities(); loadActivity(); }
+        function loadActivity() { const feed = document.getElementById('activityFeed'); if (feed && activities.length) { feed.innerHTML = activities.map(a => `<div class="activity-item"><div class="activity-icon"><i class="fas fa-bolt"></i></div><div style="flex:1;"><div>${a.text}</div><small style="color:var(--text-secondary);">${a.time}</small></div></div>`).join(''); } }
+        function initChart() { const ctx = document.getElementById('usageChart').getContext('2d'); usageChart = new Chart(ctx, { type: 'line', data: { labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], datasets: [{ label: 'Generations', data: [12, 19, 15, currentUser?.apiCalls || 27], borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)', tension: 0.4, fill: true }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: 'white' } } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'white' } }, x: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: 'white' } } } } }); }
+        function updateChart() { if (usageChart && currentUser) { usageChart.data.datasets[0].data[3] = currentUser.apiCalls || 0; usageChart.update(); } }
+        function logout() { currentUser = null; localStorage.removeItem('neoforge_currentUser'); document.getElementById('authContainer').style.display = 'flex'; document.getElementById('dashboard').style.display = 'none'; showToast('Logged out'); }
+        function trackEvent(category, action, label) { saveAnalyticsEvent(category, action, label); }
+        
+        loadData();
+        const savedUser = localStorage.getItem('neoforge_currentUser');
+        if (savedUser) { currentUser = JSON.parse(savedUser); const exists = users.find(u => u.id === currentUser.id); if (exists) { currentUser = exists; showDashboard(); loadActivity(); initChart(); updateAnalyticsDashboard(); } }
+    </script>
+</body>
+</html>
